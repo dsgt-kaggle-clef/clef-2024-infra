@@ -29,6 +29,10 @@ resource "google_compute_instance" "dev-vm" {
     }
     auto_delete = false
   }
+  // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
+  scratch_disk {
+    interface = "NVME"
+  }
   network_interface {
     network = "default"
     access_config {
