@@ -1,0 +1,40 @@
+---
+- name: install dependencies
+  apt:
+    name:
+      - docker-compose
+    update_cache: yes
+
+- name: authenticate to artifact repo
+  expect:
+    command: gcloud auth configure-docker us-central1-docker.pkg.dev
+    responses:
+      Do you want to continue (Y/n)?: "y"
+    creates: /root/.docker/config.json
+
+- name: create directory for config
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/luigid
+
+- name: copy files to remote
+  copy:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+  with_items:
+    - opt/luigid/docker-compose.yml
+    - opt/luigid/luigi.cfg
+
+- name: get luigi oauth2 dotenv from google secrets manager
+  command: |
+    gcloud secrets versions access latest \
+      --secret luigi_oauth2_proxy_dotenv \
+      --out-file /opt/luigid/.env
+
+- name: bring up containers
+  docker_compose:
+    project_src: /opt/luigid
+    pull: true
+    state: present
