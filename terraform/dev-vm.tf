@@ -5,9 +5,13 @@ locals {
     "geolifeclef",
     "birdclef",
     "plantclef",
+    "snakeclef",
+    "fungiclef",
     "idpp",
     "touche",
     "erisk",
+    "bioasq",
+    "pan",
   ]
 }
 
