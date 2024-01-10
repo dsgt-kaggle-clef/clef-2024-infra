@@ -10,6 +10,18 @@ locals {
   region     = "us-central1"
   repo_name  = local.project_id
   owner      = "dsgt-clef"
+  teams = [
+    "geolifeclef",
+    "birdclef",
+    "plantclef",
+    "snakeclef",
+    "fungiclef",
+    "idpp",
+    "touche",
+    "erisk",
+    "bioasq",
+    "pan",
+  ]
 }
 
 provider "google" {
@@ -88,21 +100,16 @@ output "bucket_name" {
 
 // we create a new policy that allows developers to be editor, compute admin, and storage admin
 locals {
-  // members in the crypto module
-  team_info = nonsensitive({
-    for entry in yamldecode(data.sops_file.default["team_info_yaml"].raw).members :
-    entry.username => entry.email
-  })
   members = {
-    for username, email in local.team_info :
-    username => "user:${email}"
+    for username in local.teams :
+    username => "group:acl-dsgt-clef-${username}-2024@googlegroups.com"
   }
 }
 
-resource "google_project_iam_member" "editor" {
+resource "google_project_iam_member" "viewer" {
   for_each = local.members
   project  = local.project_id
-  role     = "roles/editor"
+  role     = "roles/viewer"
   member   = each.value
 }
 

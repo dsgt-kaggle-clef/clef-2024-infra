@@ -1,20 +1,5 @@
 // define the base vm instance for developers
 
-locals {
-  teams = [
-    "geolifeclef",
-    "birdclef",
-    "plantclef",
-    "snakeclef",
-    "fungiclef",
-    "idpp",
-    "touche",
-    "erisk",
-    "bioasq",
-    "pan",
-  ]
-}
-
 resource "google_compute_instance" "dev-vm" {
   for_each     = toset(local.teams)
   name         = "${each.key}-dev"
