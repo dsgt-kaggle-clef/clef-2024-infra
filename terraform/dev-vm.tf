@@ -60,3 +60,9 @@ resource "google_compute_instance" "dev-vm" {
     ]
   }
 }
+
+resource "google_storage_bucket" "team-bucket" {
+  for_each = toset(local.teams)
+  name     = "${local.owner}-${each.key}-2024"
+  location = "US"
+}
