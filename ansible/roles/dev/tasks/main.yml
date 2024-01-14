@@ -1,6 +1,26 @@
 ---
 # NOTE: it might be better to build a packer image, but this will do too
 
+# configure the filesystem and fstab entry for the local nvme drive
+# /dev/disk/by-id/google-local-nvme-ssd-0
+- name: configure local ssd
+  become: yes
+  block:
+    - name: create filesystem
+      filesystem:
+        fstype: ext4
+        dev: /dev/disk/by-id/google-local-nvme-ssd-0
+    - name: create mount point
+      file:
+        path: /mnt/data
+        state: directory
+    - name: add fstab entry
+      mount:
+        path: /mnt/data
+        src: /dev/disk/by-id/google-local-nvme-ssd-0
+        fstype: ext4
+        opts: defaults,discard,nofail
+        state: present
 # https://docs.docker.com/engine/install/ubuntu/
 - name: install docker
   become: yes
@@ -127,13 +147,9 @@
         state: present
     - name: add nvidia docker repo
       apt_repository:
-        repo: deb https://nvidia.github.io/{{ item }}/ubuntu22.04/amd64/ /
+        repo: deb https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH)/ /
         state: present
-        filename: "{{ item }}"
-      with_items:
-        - libnvidia-container
-        - nvidia-container-runtime
-        - nvidia-docker
+        filename: /etc/apt/sources.list.d/nvidia-container-toolkit.list
     - name: install nvidia docker packages
       apt:
         name:
