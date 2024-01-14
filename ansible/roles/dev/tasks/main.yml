@@ -7,6 +7,7 @@
 - name: configure local ssd
   become: yes
   block:
+    # this should be done on-boot inside of the VM startup script, this is here for completeness
     - name: create filesystem
       filesystem:
         fstype: ext4
@@ -16,16 +17,21 @@
         path: /mnt/data
         state: directory
         mode: 0777
-    - name: get uuid of nvme drive
-      shell: blkid -s UUID -o value /dev/nvme0n1
-      register: uuid
     - name: add fstab entry
       mount:
         path: /mnt/data
-        src: UUID={{ uuid.stdout }}
+        src: /dev/nvme0n1
         fstype: ext4
         opts: defaults,discard,nofail
         state: present
+    # https://superuser.com/questions/174776/modify-fstab-entry-so-all-users-can-read-and-write-to-an-ext4-volume
+    - name: add chmod in cron @reboot
+      cron:
+        name: chmod /mnt/data
+        job: chmod 0777 /mnt/data
+        user: root
+        state: present
+        special_time: reboot
 # https://docs.docker.com/engine/install/ubuntu/
 - name: install docker
   become: yes
@@ -137,8 +143,8 @@
     - name: install nvidia drivers
       apt:
         name:
-          - nvidia-driver-525
-          - nvidia-utils-525
+          - nvidia-driver-535
+          - nvidia-utils-535
         state: present
     - name: install cuda
       apt:

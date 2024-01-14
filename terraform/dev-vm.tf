@@ -17,6 +17,11 @@ resource "google_compute_instance" "dev-vm" {
     team    = each.key
   }
 
+  metadata_startup_script = <<-EOF
+    #!/bin/bash
+    sudo mkfs.ext4 -F /dev/nvme0n1
+  EOF
+
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2204-lts"
