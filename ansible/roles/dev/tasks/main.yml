@@ -1,6 +1,7 @@
 ---
 # NOTE: it might be better to build a packer image, but this will do too
 
+# https://cloud.google.com/compute/docs/disks/add-local-ssd
 # configure the filesystem and fstab entry for the local nvme drive
 # /dev/disk/by-id/google-local-nvme-ssd-0
 - name: configure local ssd
@@ -9,15 +10,19 @@
     - name: create filesystem
       filesystem:
         fstype: ext4
-        dev: /dev/disk/by-id/google-local-nvme-ssd-0
+        dev: /dev/nvme0n1
     - name: create mount point
       file:
         path: /mnt/data
         state: directory
+        mode: 0777
+    - name: get uuid of nvme drive
+      shell: blkid -s UUID -o value /dev/nvme0n1
+      register: uuid
     - name: add fstab entry
       mount:
         path: /mnt/data
-        src: /dev/disk/by-id/google-local-nvme-ssd-0
+        src: UUID={{ uuid.stdout }}
         fstype: ext4
         opts: defaults,discard,nofail
         state: present
