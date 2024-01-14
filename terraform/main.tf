@@ -106,23 +106,23 @@ locals {
   }
 }
 
-resource "google_project_iam_member" "viewer" {
+resource "google_project_iam_member" "project-viewer" {
   for_each = local.members
   project  = local.project_id
   role     = "roles/viewer"
   member   = each.value
 }
 
-resource "google_project_iam_member" "compute-admin" {
+resource "google_project_iam_member" "compute-viewer" {
   for_each = local.members
   project  = local.project_id
-  role     = "roles/compute.admin"
+  role     = "roles/compute.viewer"
   member   = each.value
 }
 
-resource "google_project_iam_member" "storage-admin" {
+resource "google_project_iam_member" "storage-viewer" {
   for_each = local.members
   project  = local.project_id
-  role     = "roles/storage.admin"
+  role     = "roles/storage.objectViewer"
   member   = each.value
 }
