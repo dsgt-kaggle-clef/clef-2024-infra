@@ -23,24 +23,24 @@ If you don't have the Google Cloud SDK installed, follow these steps:
 
 **Run Locally**
 
-1. Set the Project: Run the following command to set your active project to `dsgt-clef-2024`:
+1. **Set the Project:** Run the following command to set your active project to `dsgt-clef-2024`:
 ```
 gcloud config set project dsgt-clef-2024
 ```
 
 This command configures `gcloud` to use the specified project for all subsequent commands.
 
-2. Define Your Instance: Assign your instance name to a variable for ease of use:
+2. **Define Your Instance:** Assign your instance name to a variable for ease of use:
 ```
 instance=birdclef-dev
 ```
 
-3. Start Your Instance: Start your VM using the following command:
+3. **Start Your Instance:** Start your VM using the following command:
 ```
 gcloud compute instances start ${instance}
 ```
 
-4. Configure SSH: This step helps to simplify the SSH connection process:
+4. **Configure SSH:** This step helps to simplify the SSH connection process:
 ```
 gcloud compute config-ssh
 ```
