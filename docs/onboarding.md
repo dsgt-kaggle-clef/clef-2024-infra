@@ -68,7 +68,7 @@ This command updates your local SSH configuration file with the details of the G
 
 **Run Locally**
 
-To stop your instance and save resources when not in use:
+After you're done working, make sure to stop your instance and save resources when not in use:
 ```
 gcloud compute instances stop ${instance}
 ```
