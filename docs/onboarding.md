@@ -16,6 +16,7 @@ This section provides a detailed guide on how to log into a Google Cloud Platfor
 If you don't have the Google Cloud SDK installed, follow these steps:
 
 1. **Download and Install:** Visit the [Google Cloud SDK page](https://cloud.google.com/sdk/docs/install-sdk) and follow the instructions to download and install the SDK for your operating system.
+
 2. **Initialize gcloud:** Run `gcloud init` in your local terminal. Follow the prompts to log in to your Google account and set your default project.
 
 
@@ -53,6 +54,7 @@ This command updates your local SSH configuration file with the details of the G
 **Run Locally**
 
 1. **Install VS Code:** If you don't have it, download and install Visual Studio Code from the [official website](https://code.visualstudio.com/download).
+
 2. **Install Remote - SSH Extension:** Open VS Code, go to the Extensions view by clicking on the square icon on the sidebar, or pressing `Ctrl+Shift+X`, and search for "Remote - SSH". Install the extension.
 
 ### Step 4: Connect to the VM using VS Code
@@ -60,8 +62,11 @@ This command updates your local SSH configuration file with the details of the G
 **Run in VS Code**
 
 1. **Open the Command Palette:** Press `Ctrl+Shift+P` or `Cmd+Shift+P` to open the command palette.
+
 2. **Initiate SSH Connection:** Type 'Remote-SSH: Connect to Host' and press Enter.
+
 3. **Select Your VM Instance:** Choose the VM instance you configured earlier. It should appear in the list due to the previous `gcloud compute config-ssh` command.
+
 4. **Verify Connection:** Once connected, a new VS Code window will open, connected to your VM. Open a terminal inside VS Code (Terminal > New Terminal) to verify you're logged into the VM.
 
 ### Step 5: Stopping the GCP VM Instance (Optional)
@@ -75,6 +80,83 @@ gcloud compute instances stop ${instance}
 
 This should enable you to set up and log into your GCP VM using VS Code with the SSH extension, ensuring a smooth remote development experience.
 
+## 2. Authenticating to GitHub using GitHub CLI
+
+This section streamlines the authentication process to GitHub using the GitHub CLI (`gh`), which simplifies the SSH setup. It includes checking for and installing `gh`, and authenticating using it. These steps should be executed within the Virtual Machine (VM) accessed through VS Code.
+Prerequisites
+
+- **Access to the VM:** Ensure you're logged into your GCP VM via VS Code as described in the previous section.
+- **GitHub Account:** A GitHub account is required for authentication.
+
+### Step 1: Check for Existing GitHub CLI Installation
+
+**Run in VM (VS Code Terminal)**
+
+Before installing `gh`, check if it is already installed:
+
+1. **Check GitHub CLI:** Run `gh --version` to see if `gh` is installed and to check its version.
+
+2. **If `gh` is Not Installed:** Follow the installation guide in Step 2. If it's installed, proceed to Step 3.
+
+### Step 2: Install GitHub CLI
+
+**Run in VM (VS Code Terminal)**
+
+If `gh` is not installed, you'll need to install it:
+
+1. **Download GitHub CLI:** Run the following command to download and install the latest version of `gh`:
+
+```
+type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+&& sudo apt update \
+&& sudo apt install gh -y
+```
+
+2. **Verify Installation:** After installation, run `gh --version` to ensure it is correctly installed.
+
+### Step 3: Authenticate with GitHub using GitHub CLI
+
+**Run in VM (VS Code Terminal)**
+
+1. **Start the Authentication Process:** Run `gh auth login` to begin the authentication process.
+
+2. **Choose SSH for Git Operations:** When prompted, select SSH as the preferred protocol for Git operations.
+
+3. **Generate a New SSH Key (if required):** If you don't already have an SSH key, `gh` will prompt you to generate one. Follow the on-screen instructions to create a new SSH key.
+
+4. **Authenticate Your SSH Key with GitHub:** `gh` will automatically add your SSH key to your GitHub account. Follow any additional prompts to complete the process.
+
+5. **Verify Authentication:** After completing the setup, run `gh auth status` to check if you're successfully authenticated.
+
+### Step 4: Verify GitHub User Information (Optional)
+
+**Run in VM (VS Code Terminal)**
+
+It's good practice to ensure your Git identity is correctly set:
+
+1. **Check Git Configurations:** Run `git config --list` to see your Git configurations, including user name and email.
+
+2. **Set Git User Information If Not Set:** If not already set, configure your Git user information:
+
+```
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
+Replace with your GitHub email and name.
+
+### Step 5: Test GitHub Connection
+
+**Run in VM (VS Code Terminal)**
+
+1. **SSH Connection Test:** To confirm that your SSH setup is working, run `ssh -T git@github.com`. You should receive a message confirming successful authentication.
+
+2. **Test Git Operations:** Try a simple Git operation, like `git fetch`, to ensure everything is working correctly.
+
+
+<!--
 ## 2. Authenticating into GitHub Using a New SSH Key
 
 This section focuses on setting up SSH-based authentication for GitHub. It includes steps to generate a new SSH key, add it to your GitHub account, and verify if this setup is already correctly done. These steps are to be executed within the Virtual Machine (VM) accessed through VS Code.
@@ -144,8 +226,7 @@ It's important to set your Git identity in the VM:
 
 
 
-
-<!---
+<!--
 ## Logging into a GCP VM
 
 I recommend using VSCode with the SSH extension, which will allow you to develop seamlessly with all the amenities you might expect locally.
