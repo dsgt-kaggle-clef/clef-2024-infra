@@ -75,6 +75,75 @@ gcloud compute instances stop ${instance}
 
 This should enable you to set up and log into your GCP VM using VS Code with the SSH extension, ensuring a smooth remote development experience.
 
+## 2. Authenticating into GitHub Using a New SSH Key
+
+This section focuses on setting up SSH-based authentication for GitHub. It includes steps to generate a new SSH key, add it to your GitHub account, and verify if this setup is already correctly done. These steps are to be executed within the Virtual Machine (VM) accessed through VS Code.
+
+### Prerequisites
+
+- **Access to the VM:** Ensure you've successfully logged into your GCP VM using VS Code as outlined in the previous section.
+- **GitHub Account:** You should have a GitHub account where you can add the SSH key.
+
+### Step 1: Check Existing SSH Keys in the VM
+
+**Run in VM (VS Code Terminal)**
+
+Before generating a new SSH key, check if you already have an existing SSH key in the VM:
+
+1. **List SSH Keys:** Run `ls -al ~/.ssh` to list all files in your `.ssh` directory. Look for files named `id_rsa.pub` or `id_ed25519.pub`. These are public SSH keys.
+2. **Skip Key Generation If Exists:** If such a file exists and you prefer to use it, skip to Step 3. Otherwise, proceed to generate a new key.
+
+### Step 2: Generate a New SSH Key
+
+**Run in VM (VS Code Terminal)**
+
+If you don't have an existing SSH key or wish to create a new one:
+
+1. **Generate SSH Key:** Run `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`, replacing `your_email@example.com` with your GitHub email. Press Enter to accept the default file location.
+2. **Set a Secure Passphrase:** When prompted, enter a secure passphrase for the key.
+
+### Step 3: Add the SSH Key to Your GitHub Account
+
+**Run in VM (VS Code Terminal)**
+
+1. **Copy the SSH Key:** Run `cat ~/.ssh/id_rsa.pub` (or `id_ed25519.pub` if you used `Ed25519`) to display your public key. Copy this key to your clipboard.
+2. **Add Key to GitHub:** Go to your GitHub account settings, navigate to "SSH and GPG keys", and click on "New SSH key". Paste your key here and save it.
+
+### Step 4: Verify SSH Connection to GitHub
+
+**Run in VM (VS Code Terminal)**
+
+To ensure your SSH setup is correct:
+
+1. **Test SSH Connection:** Run `ssh -T git@github.com`. You should receive a message confirming your authentication.
+2. **Accept GitHub's Host Key:** If prompted to verify the authenticity of the GitHub host, type yes to continue.
+
+### Step 5: Configure GitHub User Information
+
+**Run in VM (VS Code Terminal)**
+
+It's important to set your Git identity in the VM:
+
+1. **Configure Git Email:** Run `git config --global user.email "you@example.com"`, replacing with your GitHub email.
+2. **Configure Git Name:** Run `git config --global user.name "Your Name"`, replacing with your GitHub username.
+
+### Step 6: Check Existing GitHub Authentication Status
+
+**Run in VM (VS Code Terminal)**
+
+1. **Check Current GitHub Authentication:** Run `gh auth status` to check if you're already authenticated with GitHub CLI.
+2. **If Not Authenticated:** If you're not authenticated or wish to re-authenticate, run `gh auth login` and follow the prompts. Choose SSH for authentication.
+3. **Follow On-Screen Instructions:** For SSH, you'll be guided to enter your SSH key passphrase. For HTTPS, you'll need to enter your GitHub credentials.
+
+### Step 7: Verify Configuration
+
+**Run in VM (VS Code Terminal)**
+
+1. **Check Git Configurations:** Run `git config --list` to see all the Git configurations, including user name and email. Ensure they're correctly set.
+2. **Try a Test Command:** Run a Git command like `git fetch` to verify that your setup works correctly with your GitHub repository.
+
+
+
 
 <!---
 ## Logging into a GCP VM
