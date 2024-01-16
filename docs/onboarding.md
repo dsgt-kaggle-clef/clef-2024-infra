@@ -69,7 +69,7 @@ This command updates your local SSH configuration file with the details of the G
 
 4. **Verify Connection:** Once connected, a new VS Code window will open, connected to your VM. Open a terminal inside VS Code (Terminal > New Terminal) to verify you're logged into the VM.
 
-### Step 5: Stopping the GCP VM Instance (IMPORTANT!)
+### Step 5: Stopping the GCP VM Instance
 
 **Run Locally**
 
