@@ -69,7 +69,7 @@ This command updates your local SSH configuration file with the details of the G
 
 4. **Verify Connection:** Once connected, a new VS Code window will open, connected to your VM. Open a terminal inside VS Code (Terminal > New Terminal) to verify you're logged into the VM.
 
-### Step 5: Stopping the GCP VM Instance (Optional)
+### Step 5: Stopping the GCP VM Instance (IMPORTANT!)
 
 **Run Locally**
 
@@ -82,42 +82,14 @@ This should enable you to set up and log into your GCP VM using VS Code with the
 
 ## 2. Authenticating to GitHub using GitHub CLI
 
-This section streamlines the authentication process to GitHub using the GitHub CLI (`gh`), which simplifies the SSH setup. It includes checking for and installing `gh`, and authenticating using it. These steps should be executed within the Virtual Machine (VM) accessed through VS Code.
-Prerequisites
+This section streamlines the authentication process to GitHub using the GitHub CLI (`gh`), which simplifies the SSH setup. These steps should be executed within the Virtual Machine (VM) accessed through VS Code.
+
+### Prerequisites
 
 - **Access to the VM:** Ensure you're logged into your GCP VM via VS Code as described in the previous section.
 - **GitHub Account:** A GitHub account is required for authentication.
 
-### Step 1: Check for Existing GitHub CLI Installation
-
-**Run in VM (VS Code Terminal)**
-
-Before installing `gh`, check if it is already installed:
-
-1. **Check GitHub CLI:** Run `gh --version` to see if `gh` is installed and to check its version.
-
-2. **If `gh` is Not Installed:** Follow the installation guide in Step 2. If it's installed, proceed to Step 3.
-
-### Step 2: Install GitHub CLI
-
-**Run in VM (VS Code Terminal)**
-
-If `gh` is not installed, you'll need to install it:
-
-1. **Download GitHub CLI:** Run the following command to download and install the latest version of `gh`:
-
-```
-type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-&& sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-&& sudo apt update \
-&& sudo apt install gh -y
-```
-
-2. **Verify Installation:** After installation, run `gh --version` to ensure it is correctly installed.
-
-### Step 3: Authenticate with GitHub using GitHub CLI
+### Step 1: Authenticate with GitHub using GitHub CLI
 
 **Run in VM (VS Code Terminal)**
 
@@ -131,7 +103,7 @@ curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo 
 
 5. **Verify Authentication:** After completing the setup, run `gh auth status` to check if you're successfully authenticated.
 
-### Step 4: Verify GitHub User Information (Optional)
+### Step 2: Verify GitHub User Information (Optional)
 
 **Run in VM (VS Code Terminal)**
 
