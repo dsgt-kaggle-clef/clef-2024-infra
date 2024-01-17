@@ -113,10 +113,17 @@ resource "google_project_iam_member" "project-viewer" {
   member   = each.value
 }
 
-resource "google_project_iam_member" "compute-viewer" {
+resource "google_project_iam_member" "compute-admin" {
   for_each = local.members
   project  = local.project_id
-  role     = "roles/compute.viewer"
+  role     = "roles/compute.admin"
+  member   = each.value
+}
+
+resource "google_project_iam_member" "service-account-user" {
+  for_each = local.members
+  project  = local.project_id
+  role     = "roles/iam.serviceAccountUser"
   member   = each.value
 }
 

@@ -66,6 +66,7 @@ resource "google_storage_bucket" "team-bucket" {
   }
 }
 
+
 // now give each team access to their bucket
 resource "google_storage_bucket_iam_binding" "team-bucket-admin" {
   for_each = toset(local.teams)
