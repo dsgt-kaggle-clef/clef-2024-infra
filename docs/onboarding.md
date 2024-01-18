@@ -128,6 +128,92 @@ Replace with your GitHub email and name.
 2. **Test Git Operations:** Try a simple Git operation, like `git fetch`, to ensure everything is working correctly.
 
 
+## 3. Cloning the Repository and Branching for Development
+
+This final step in the onboarding process involves cloning the desired GitHub repository to your VM and creating a new branch for development. In this example, we'll use the `birdclef-2024` repository.
+
+### Prerequisites
+
+- **Authenticated GitHub Account:** Ensure you've completed the GitHub authentication process as outlined in the previous section.
+- **Access to the VM:** Make sure you are logged into your GCP VM via VS Code.
+
+### Step 1: Clone the Repository
+
+**Run in VM (VS Code Terminal)**
+
+1. **Navigate to Desired Directory:** Choose the directory where you want to clone the repository. For instance, `cd ~/projects`.
+
+2. **Clone the Repository:** Run the following command to clone the `birdclef-2024` repository:
+```
+git clone https://github.com/dsgt-kaggle-clef/birdclef-2024.git
+```
+
+3. **Navigate into the Repository Directory:** After cloning, move into the repository's directory:
+```
+cd birdclef-2024
+```
+
+### Step 2: Create and Checkout a New Branch
+
+**Run in VM (VS Code Terminal)**
+
+Creating a new branch ensures that your development work is separated from the main branch, allowing for easier code management and review.
+
+1. **Fetch All Branches (Optional):** If you want to see all existing branches first, run git fetch --all.
+
+2. **Create a New Branch:** Create a new branch off the main branch for your development work:
+```
+git checkout -b feature/your-branch-name
+```
+
+Replace `your-branch-name` with a meaningful name for your development work, typically starting with `feature/`, `bugfix/`, or similar prefixes.
+
+3. **Verify New Branch:** Ensure you're on the new branch with git branch. The new branch should be highlighted.
+
+### Step 3: Verify the Setup
+
+**Run in VM (VS Code Terminal)**
+
+1. **Check Repository Content:** Verify that the repository content is correctly cloned by listing the files with `ls`.
+
+2. **Check Branch Status:** Use `git status` to ensure you're on the correct branch and to see if there are any changes.
+
+### Step 4: Naming Convention for Jupyter Notebooks
+
+When creating new Jupyter notebooks, adhere to the following naming convention:
+
+- **Format:** initials-date-version-title.ipynb
+- **Explanation:**
+    - **initials:** Your initials (e.g., Tony Stark → ts).
+    - **date:** The date you created the notebook in YYYYMMDD format.
+    - **version:** A two-digit version number, starting from `00`.
+    - **title:** A brief, hyphen-separated title describing the notebook's purpose.
+
+**Example**
+
+If Tony Stark creates a data analysis notebook on January 18, 2024, the filename would be:
+- `ts-20240118-00-data-analysis.ipynb`
+
+### Step 4: Regularly Commit Changes
+
+Remember to regularly commit your changes to maintain a record of your work and to synchronize with the remote repository.
+
+1. **Stage Changes:** Use `git add .` to stage all changes in the 'notebooks' directory.
+
+2. **Commit Changes:** Commit with a descriptive message:
+```
+git commit -m "Add initial data analysis notebook by TS"
+```
+
+3. **Push to Remote:** Push your changes to the remote repository:
+```
+git push -u origin feature/your-branch-name
+```
+
+
+
+
+
 
 <!--
 ## 2. Authenticating into GitHub Using a New SSH Key
