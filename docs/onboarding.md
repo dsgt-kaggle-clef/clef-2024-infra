@@ -189,7 +189,7 @@ Replace `your-branch-name` with a meaningful name for your development work, typ
 
 When creating new Jupyter notebooks, adhere to the following naming convention:
 
-- **Format:** initials-date-version-title.ipynb
+- **Format:** `initials-date-version-title.ipynb`
 - **Explanation:**
     - **initials:** Your initials (e.g., Tony Stark → ts).
     - **date:** The date you created the notebook in YYYYMMDD format.
