@@ -217,7 +217,7 @@ git commit -m "Add initial data analysis notebook by TS"
 git push -u origin feature/your-branch-name
 ```
 
-
+That's it! You're now all set to start developing on your project. Happy coding! 😊💻
 
 
 
