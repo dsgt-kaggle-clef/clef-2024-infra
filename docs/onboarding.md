@@ -128,6 +128,7 @@ Replace with your GitHub email and name.
 2. **Test Git Operations:** Try a simple Git operation, like `git fetch`, to ensure everything is working correctly.
 
 
+
 <!--
 ## 2. Authenticating into GitHub Using a New SSH Key
 
