@@ -175,7 +175,7 @@ git checkout -b feature/your-branch-name
 
 Replace `your-branch-name` with a meaningful name for your development work, typically starting with `feature/`, `bugfix/`, or similar prefixes.
 
-3. **Verify New Branch:** Ensure you're on the new branch with git branch. The new branch should be highlighted.
+3. **Verify New Branch:** Ensure you're on the new branch with `git branch`. The new branch should be highlighted.
 
 ### Step 3: Verify the Setup
 
