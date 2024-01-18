@@ -19,6 +19,8 @@ If you don't have the Google Cloud SDK installed, follow these steps:
 
 2. **Initialize gcloud:** Run `gcloud init` in your local terminal. Follow the prompts to log in to your Google account and set your default project.
 
+If you already have Google Cloud SDK installed, make sure that you have activated the account that has an access to the GCP project by running `gcloud auth list` command.
+
 
 ### Step 2: Start the GCP VM Instance
 
@@ -36,12 +38,17 @@ This command configures `gcloud` to use the specified project for all subsequent
 instance=birdclef-dev
 ```
 
-3. **Start Your Instance:** Start your VM using the following command:
+3. **Review Your Dafault Zone Setting:** If you have never configured the zone before, Google Cloud CLI will automatically set it to the instance's zone. If you have configured a default zone previously, you can reconfigure it by running the following command: 
+```
+gcloud config set compute/zone us-central1-a
+```
+
+4. **Start Your Instance:** Start your VM using the following command:
 ```
 gcloud compute instances start ${instance}
 ```
 
-4. **Configure SSH:** This step helps to simplify the SSH connection process:
+5. **Configure SSH:** This step helps to simplify the SSH connection process:
 ```
 gcloud compute config-ssh
 ```
