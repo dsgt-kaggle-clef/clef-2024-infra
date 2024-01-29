@@ -31,6 +31,14 @@ ansible all -i inventory.dev.gcp.yml -m ping
 ansible-playbook -i inventory.dev.gcp.yml dev.yml
 ```
 
+We can run a faster subset of commands that can be run regularly:
+
+```bash
+ansible-playbook -i inventory.dev.gcp.yml dev.yml --skip-tags=slow
+# we can also run for a single host
+ansible-playbook -i inventory.dev.gcp.yml dev.yml --skip-tags=slow --limit=birdclef-dev
+```
+
 ## links
 
 - https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#content-organization

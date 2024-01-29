@@ -19,7 +19,11 @@ resource "google_compute_instance" "dev-vm" {
 
   metadata_startup_script = <<-EOF
     #!/bin/bash
+    # does this create a strange chicken and the egg problem?
     sudo mkfs.ext4 -F /dev/nvme0n1
+    sudo mkdir -p /mnt/data
+    sudo mount /mnt/data
+    sudo chmod 0777 /mnt/data
   EOF
 
   boot_disk {

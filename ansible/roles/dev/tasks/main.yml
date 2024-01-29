@@ -1,116 +1,5 @@
 ---
-# NOTE: it might be better to build a packer image, but this will do too
-
-# https://cloud.google.com/compute/docs/disks/add-local-ssd
-# configure the filesystem and fstab entry for the local nvme drive
-# /dev/disk/by-id/google-local-nvme-ssd-0
-- name: configure local ssd
-  become: yes
-  block:
-    # this should be done on-boot inside of the VM startup script, this is here for completeness
-    - name: create filesystem
-      filesystem:
-        fstype: ext4
-        dev: /dev/nvme0n1
-    - name: create mount point
-      file:
-        path: /mnt/data
-        state: directory
-        mode: 0777
-    - name: add fstab entry
-      mount:
-        path: /mnt/data
-        src: /dev/nvme0n1
-        fstype: ext4
-        opts: defaults,discard,nofail
-        state: present
-    # https://superuser.com/questions/174776/modify-fstab-entry-so-all-users-can-read-and-write-to-an-ext4-volume
-    - name: add chmod in cron @reboot
-      cron:
-        name: chmod /mnt/data
-        job: chmod 0777 /mnt/data
-        user: root
-        state: present
-        special_time: reboot
-# https://docs.docker.com/engine/install/ubuntu/
-- name: install docker
-  become: yes
-  block:
-    - name: download key for docker
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-    - name: add docker apt repo
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
-        state: present
-        filename: docker
-    - name: install docker packages
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-          - docker-buildx-plugin
-          - docker-compose-plugin
-        state: present
-# https://github.com/cli/cli/blob/trunk/docs/install_linux.md
-- name: install gh tool
-  become: yes
-  block:
-    - name: download key and update apt repo for gh cli
-      apt_key:
-        url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
-        state: present
-    - name: add gh cli apt repo
-      apt_repository:
-        repo: deb [arch=amd64] https://cli.github.com/packages stable main
-        state: present
-        filename: github-cli
-    - name: install gh cli
-      apt:
-        name: gh
-        state: present
-- name: install sops
-  become: yes
-  block:
-    - name: set sops version
-      set_fact:
-        sops_version: "3.7.3"
-    - name: download sops deb
-      get_url:
-        url: https://github.com/mozilla/sops/releases/download/v{{ sops_version }}/sops_{{ sops_version }}_amd64.deb
-        dest: /tmp/sops.deb
-    - name: install sops
-      apt:
-        deb: /tmp/sops.deb
-        state: present
-- name: install tfenv
-  become: yes
-  block:
-    - name: install tfenv
-      git:
-        repo: https://github.com/tfutils/tfenv.git
-        dest: /opt/tfenv
-        version: v3.0.0
-    - name: link tfenv to /usr/local/bin
-      file:
-        src: /opt/tfenv/bin/{{ item }}
-        dest: /usr/local/bin/{{ item }}
-        state: link
-      with_items:
-        - tfenv
-        - terraform
-- name: install node 18
-  become: yes
-  block:
-    - name: add node deb repo
-      shell: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-    - name: install node
-      apt:
-        name: nodejs
-        state: present
-- name: install default other apt dependencies
+- name: install apt dependencies
   become: yes
   apt:
     name:
@@ -121,6 +10,10 @@
       - libffi-dev # for ansible
       - ffmpeg # for audio processing
       - libsndfile1 # for audio processing
+      - aria2
+      - nvtop
+      - ranger
+      - ncdu
     state: present
 - name: upgrade pip
   become: yes
@@ -137,38 +30,27 @@
       - ansible
       - pre-commit
       - pip-tools
-- name: install nvidia drivers and cuda
+      - jupyterlab
+      - pyspark
+      - matplotlib
+      - pandas
+      - scikit-learn
+      - umap-learn
+- name: install torch (GPU)
+  become: yes
+  pip:
+    name:
+      - torch
+      - torchvision
+    state: latest
+    extra_args: --index-url https://download.pytorch.org/whl/cu118
+- name: install gcs connector for pyspark
   become: yes
   block:
-    - name: install nvidia drivers
-      apt:
-        name:
-          - nvidia-driver-535
-          - nvidia-utils-535
-        state: present
-    - name: install cuda
-      apt:
-        name:
-          - nvidia-cuda-toolkit
-        state: present
-    # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
-    - name: download key for nvidia docker
-      apt_key:
-        url: https://nvidia.github.io/libnvidia-container/gpgkey
-        state: present
-    - name: add nvidia docker repo
-      apt_repository:
-        repo: deb https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH)/ /
-        state: present
-        filename: /etc/apt/sources.list.d/nvidia-container-toolkit.list
-    - name: install nvidia docker packages
-      apt:
-        name:
-          - nvidia-container-toolkit
-        state: present
-    - name: configure nvidia docker
-      shell: nvidia-ctk runtime configure --runtime=docker
-    - name: restart docker
-      service:
-        name: docker
-        state: restarted
+    - name: copy script into usr local bin
+      copy:
+        src: install_gcs_connector.sh
+        dest: /usr/local/bin/install_gcs_connector.sh
+        mode: 0755
+    - name: run gcs connector script
+      shell: /usr/local/bin/install_gcs_connector.sh

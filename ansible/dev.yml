@@ -1,4 +1,7 @@
 - hosts: all
   become: true
   roles:
-    - dev
+    - name: system
+    - name: dev
+    - name: dev-slow
+      tags: slow
