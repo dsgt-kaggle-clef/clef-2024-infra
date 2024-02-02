@@ -82,7 +82,7 @@ This command updates your local SSH configuration file with the details of the G
 
 After you're done working, make sure to stop your instance and save resources when not in use:
 ```
-gcloud compute instances stop ${instance}
+gcloud compute instances stop ${instance} --discard-local-ssd=true
 ```
 
 This should enable you to set up and log into your GCP VM using VS Code with the SSH extension, ensuring a smooth remote development experience.
