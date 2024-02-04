@@ -21,6 +21,7 @@ locals {
     "erisk",
     "bioasq",
     "pan",
+    "longeval",
   ]
 }
 

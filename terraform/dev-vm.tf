@@ -29,7 +29,7 @@ resource "google_compute_instance" "dev-vm" {
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2204-lts"
-      size  = 20
+      size  = 30
     }
     auto_delete = false
   }
@@ -57,7 +57,8 @@ resource "google_compute_instance" "dev-vm" {
   lifecycle {
     ignore_changes = [
       machine_type,
-      boot_disk
+      boot_disk,
+      metadata,
     ]
   }
 }
