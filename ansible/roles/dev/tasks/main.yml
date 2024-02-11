@@ -15,6 +15,7 @@
       - ranger
       - ncdu
     state: present
+    update_cache: yes
 - name: upgrade pip
   become: yes
   pip:
