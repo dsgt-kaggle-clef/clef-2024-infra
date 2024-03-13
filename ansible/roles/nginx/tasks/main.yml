@@ -41,12 +41,12 @@
         mode: 0644
       with_items: "{{ services }}"
 
-    # - name: copy nginx https file
-    #   template:
-    #     src: "etc/nginx/sites-available/service-https.j2"
-    #     dest: "/etc/nginx/sites-available/{{ item.domain_name }}-https"
-    #     mode: 0644
-    #   with_items: "{{ services }}"
+    - name: copy nginx https file
+      template:
+        src: "etc/nginx/sites-available/service-https.j2"
+        dest: "/etc/nginx/sites-available/{{ item.domain_name }}-https"
+        mode: 0644
+      with_items: "{{ services }}"
 
     - name: enable http
       file:
@@ -55,11 +55,12 @@
         state: link
       with_items: "{{ services }}"
 
-    # - name: disable https
-    #   file:
-    #     dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
-    #     state: absent
-    #   with_items: "{{ services }}"
+    # remove https from enabled
+    - name: disable https
+      file:
+        dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
+        state: absent
+      with_items: "{{ services }}"
 
 - name: restart nginx
   service:
@@ -67,7 +68,7 @@
     state: restarted
 
 - name: get certbot certificate
-  command: certbot
+  command: certbot certonly
     --nginx
     --agree-tos
     --non-interactive
@@ -77,17 +78,17 @@
     creates: /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem
   with_items: "{{ services }}"
 
-# - name: Generate dhparams
-#   shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
-#   args:
-#     creates: /etc/nginx/dhparams.pem
+- name: Generate dhparams
+  shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
+  args:
+    creates: /etc/nginx/dhparams.pem
 
-# - name: enable https
-#   file:
-#     dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
-#     src: /etc/nginx/sites-available/{{ item.domain_name }}-https
-#     state: link
-#   with_items: "{{ services }}"
+- name: enable https
+  file:
+    dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
+    src: /etc/nginx/sites-available/{{ item.domain_name }}-https
+    state: link
+  with_items: "{{ services }}"
 
 - name: restart nginx
   service:

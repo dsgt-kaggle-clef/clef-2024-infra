@@ -1,9 +1,13 @@
 server {
     listen 80;
-    listen [::]:80;
     server_name {{ item.domain_name }};
+
+    location /.well-known/acme-challenge {
+        root /var/www/letsencrypt;
+        try_files $uri $uri/ =404;
+    }
+
     location / {
-        # oauth2-proxy to our instance
-        proxy_pass http://localhost:{{ item.port }};
+        rewrite ^ https://{{ item.domain_name }}$request_uri? permanent;
     }
 }

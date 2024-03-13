@@ -10,6 +10,7 @@ services:
       - LUIGI_CONFIG_PATH=/app/luigi.cfg
     volumes:
       - ./:/app
+  # https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
   oauth2-proxy:
     restart: always
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
