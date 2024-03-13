@@ -1,80 +1,94 @@
-- name: install nginx
+- name: install nginx and certbot
   apt:
-    name: nginx
+    name:
+      - nginx
+      - certbot
+      - python3-certbot-nginx
     update_cache: yes
 
 - name: pull json secrets from google secrets manager
-  command: gcloud secrets versions access latest --secret lets_encrypt_json
-  register: lets_encrypt_json
+  command: gcloud secrets versions access latest --secret lets_encrypt_yaml
+  register: lets_encrypt_yaml
 
 - name: set facts from json secrets
   set_fact:
-    "{{ item }}": "{{ (lets_encrypt_json.stdout | from_json)[item] }}"
+    "{{ item }}": "{{ (lets_encrypt_yaml.stdout | from_yaml)[item] }}"
   with_items:
-    - domain_name
-    - letsencrypt_email
+    - services
 
-- name: copy nginx config file (j2)
-  template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
-    mode: 0644
-  with_items:
-    - etc/nginx/sites-available/nginx-http
-    - etc/nginx/sites-available/nginx-https
+# for each domain, lets create a certificate and copy the nginx
+# create a block
+- name: configure nginx
+  block:
+    - name: copy nginx config file
+      template:
+        src: "{{ item }}"
+        dest: "/{{ item }}"
+        mode: 0644
+      with_items:
+        - etc/nginx/nginx.conf
 
-- name: copy nginx config file
-  template:
-    src: "{{ item }}"
-    dest: "/{{ item }}"
-    mode: 0644
-  with_items:
-    - etc/nginx/nginx.conf
+    # remove default site
+    - name: remove default site
+      file:
+        dest: /etc/nginx/sites-enabled/default
+        state: absent
 
-- name: enable http
-  file:
-    dest: /etc/nginx/sites-enabled/nginx-http
-    src: /etc/nginx/sites-available/nginx-http
-    state: link
+    - name: copy nginx http file
+      template:
+        src: "etc/nginx/sites-available/service-http.j2"
+        dest: "/etc/nginx/sites-available/{{ item.domain_name }}-http"
+        mode: 0644
+      with_items: "{{ services }}"
 
-- name: disable https
-  file:
-    dest: /etc/nginx/sites-enabled/nginx-https
-    state: absent
+    - name: copy nginx https file
+      template:
+        src: "etc/nginx/sites-available/service-https.j2"
+        dest: "/etc/nginx/sites-available/{{ item.domain_name }}-https"
+        mode: 0644
+      with_items: "{{ services }}"
+
+    - name: enable http
+      file:
+        dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-http
+        src: /etc/nginx/sites-available/{{ item.domain_name }}-http
+        state: link
+      with_items: "{{ services }}"
+
+    # remove https from enabled
+    - name: disable https
+      file:
+        dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
+        state: absent
+      with_items: "{{ services }}"
 
 - name: restart nginx
   service:
     name: nginx
     state: restarted
 
-- name: install certbot
-  apt:
-    name: certbot
-    update_cache: yes
-
-- name: install certbot nginx plugin
-  apt:
-    name: python3-certbot-nginx
-    update_cache: yes
-
 - name: get certbot certificate
-  command: certbot certonly --nginx --agree-tos --email {{ letsencrypt_email }} -d {{ domain_name }}
+  command: certbot certonly
+    --nginx
+    --agree-tos
+    --non-interactive
+    --email {{ item.letsencrypt_email }}
+    -d {{ item.domain_name }}
   args:
-    creates: /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+    creates: /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem
+  with_items: "{{ services }}"
 
 - name: Generate dhparams
   shell: openssl dhparam -out /etc/nginx/dhparams.pem 2048
   args:
     creates: /etc/nginx/dhparams.pem
 
-- name: enable all other sites
+- name: enable https
   file:
-    dest: /etc/nginx/sites-enabled/{{ item }}
-    src: /etc/nginx/sites-available/{{ item }}
+    dest: /etc/nginx/sites-enabled/{{ item.domain_name }}-https
+    src: /etc/nginx/sites-available/{{ item.domain_name }}-https
     state: link
-  with_items:
-    - nginx-http
-    - nginx-https
+  with_items: "{{ services }}"
 
 - name: restart nginx
   service:

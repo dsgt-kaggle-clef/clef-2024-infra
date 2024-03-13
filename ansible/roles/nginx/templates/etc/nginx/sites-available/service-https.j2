@@ -6,12 +6,12 @@ add_header X-XSS-Protection "1; mode=block";
 #
 server {
     listen 443 ssl default deferred;
-    server_name {{ domain_name }};
+    server_name {{ item.domain_name }};
 
     ssl on;
-    ssl_certificate         /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
-    ssl_certificate_key     /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate         /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/{{ item.domain_name }}/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem;
 
     ssl_session_cache shared:SSL:50m;
     ssl_session_timeout 5m;
@@ -24,10 +24,10 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
     ssl_prefer_server_ciphers on;
 
-    root /var/www/{{ domain_name }};
+    root /var/www/{{ item.domain_name }};
 
     location / {
         # oauth2-proxy to our luigi instance
-        proxy_pass http://localhost:4180;
+        proxy_pass http://localhost:{{ item.port }};
     }
 }

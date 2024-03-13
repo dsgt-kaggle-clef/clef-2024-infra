@@ -30,7 +30,7 @@
 - name: get luigi oauth2 dotenv from google secrets manager
   command: |
     gcloud secrets versions access latest \
-      --secret luigi_oauth2_proxy_dotenv \
+      --secret luigi_dotenv \
       --out-file /opt/luigid/.env
 
 - name: bring up containers

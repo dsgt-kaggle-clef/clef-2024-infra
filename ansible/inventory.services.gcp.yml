@@ -7,6 +7,6 @@ regions:
 hostnames:
   - name
 filters:
-  - labels.app=luigi
+  - labels.app=services
 compose:
   ansible_host: networkInterfaces[0].accessConfigs[0].natIP
