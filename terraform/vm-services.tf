@@ -1,7 +1,7 @@
 // define a e2-micro instance to run luigi
 resource "google_compute_instance" "services" {
   name         = "services"
-  machine_type = "e2-micro"
+  machine_type = "e2-small"
   zone         = "${local.region}-a"
   labels = {
     app = "services"

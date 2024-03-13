@@ -1,14 +1,7 @@
-add_header X-Frame-Options SAMEORIGIN;
-add_header X-Content-Type-Options nosniff;
-add_header X-XSS-Protection "1; mode=block";
-
-# HTTPS server
-#
 server {
-    listen 443 ssl default deferred;
+    listen 443 ssl;
     server_name {{ item.domain_name }};
 
-    ssl on;
     ssl_certificate         /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem;
     ssl_certificate_key     /etc/letsencrypt/live/{{ item.domain_name }}/privkey.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/{{ item.domain_name }}/fullchain.pem;
@@ -24,10 +17,8 @@ server {
     ssl_dhparam /etc/nginx/dhparams.pem;
     ssl_prefer_server_ciphers on;
 
-    root /var/www/{{ item.domain_name }};
-
     location / {
-        # oauth2-proxy to our luigi instance
+        # oauth2-proxy to our instance
         proxy_pass http://localhost:{{ item.port }};
     }
 }

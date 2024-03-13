@@ -1,5 +1,9 @@
 - hosts: all
   become: true
   roles:
-    - luigid
-    - nginx
+    - name: luigid
+      tags: luigid
+    - name: label-studio
+      tags: label-studio
+    - name: nginx
+      tags: nginx
