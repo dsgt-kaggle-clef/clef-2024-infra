@@ -45,22 +45,22 @@ resource "google_project_service" "default" {
   service = "${each.key}.googleapis.com"
 }
 
-resource "google_artifact_registry_repository" "default" {
-  location      = local.region
-  repository_id = local.project_id
-  format        = "DOCKER"
-  depends_on    = [google_project_service.default["artifactregistry"]]
-}
-
 // get the compute engine default service account
 data "google_compute_default_service_account" "default" {
   project = local.project_id
 }
 
+resource "google_artifact_registry_repository" "infra" {
+  location      = local.region
+  repository_id = "infra"
+  format        = "DOCKER"
+  depends_on    = [google_project_service.default["artifactregistry"]]
+}
+
 // grant the compute engine default service account push access to the artifact registry
-resource "google_artifact_registry_repository_iam_member" "default" {
-  repository = google_artifact_registry_repository.default.name
-  location   = google_artifact_registry_repository.default.location
+resource "google_artifact_registry_repository_iam_member" "infra" {
+  repository = google_artifact_registry_repository.infra.name
+  location   = google_artifact_registry_repository.infra.location
   role       = "roles/artifactregistry.repoAdmin"
   member     = "serviceAccount:${data.google_compute_default_service_account.default.email}"
 }
