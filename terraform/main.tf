@@ -8,7 +8,7 @@ terraform {
 locals {
   project_id = "dsgt-clef-2024"
   region     = "us-central1"
-  repo_name  = local.project_id
+  repo_name  = "clef-2024-infra"
   owner      = "dsgt-clef"
   teams = [
     "geolifeclef",
@@ -47,7 +47,7 @@ resource "google_project_service" "default" {
 
 resource "google_artifact_registry_repository" "default" {
   location      = local.region
-  repository_id = local.repo_name
+  repository_id = local.project_id
   format        = "DOCKER"
   depends_on    = [google_project_service.default["artifactregistry"]]
 }
