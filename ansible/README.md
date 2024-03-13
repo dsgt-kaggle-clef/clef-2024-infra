@@ -12,12 +12,12 @@ pip3 install ansible google-auth
 gcloud auth application-default login
 ```
 
-## configuring luigi
+## configuring luigi and label-studio
 
 ```bash
-ansible-inventory -i inventory.luigi.gcp.yml --graph
-ansible all -i inventory.luigi.gcp.yml -m ping
-ansible-playbook -i inventory.luigi.gcp.yml luigi.yml
+ansible-inventory -i inventory.services.gcp.yml --graph
+ansible all -i inventory.services.gcp.yml -m ping
+ansible-playbook -i inventory.services.gcp.yml services.yml
 ```
 
 ## configuring a dev VM

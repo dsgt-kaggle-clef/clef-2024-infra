@@ -1,0 +1,9 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ item.domain_name }};
+    location / {
+        # oauth2-proxy to our instance
+        proxy_pass http://localhost:{{ item.port }};
+    }
+}

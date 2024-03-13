@@ -2,7 +2,7 @@ version: "3.9"
 services:
   luigi:
     restart: always
-    image: us-central1-docker.pkg.dev/birdclef-2023/birdclef-2023/luigi:latest
+    image: us-central1-docker.pkg.dev/dsgt-clef-2024/infra/luigi:latest
     ports:
       - 8082:8082
     environment:
@@ -20,7 +20,7 @@ services:
       --redirect-url=https://${DOMAIN_NAME?domain name not set}/oauth2/callback
       --http-address=0.0.0.0:4180
       --provider=github
-      --github-org=dsgt-birdclef
+      --github-org=dsgt-kaggle-clef
       --scope=user:email
     ports:
       - 4180:4180
