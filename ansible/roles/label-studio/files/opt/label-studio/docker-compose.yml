@@ -5,11 +5,10 @@ services:
     restart: unless-stopped
     environment:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
-      - JSON_LOG=1
       - LABEL_STUDIO_PORT=8080
     volumes:
       - ./data:/label-studio/data:rw
-    command: label-studio-uwsgi
+    command: label-studio
   # https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
   oauth2-proxy:
     restart: always
