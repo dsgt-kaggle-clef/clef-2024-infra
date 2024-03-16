@@ -1,0 +1,11 @@
+- hosts: all
+  # set no_cuda variable to skip nvidia drivers and cuda
+  vars:
+    no_cuda: true
+    disk_name: md0
+  become: true
+  roles:
+    - name: system
+    - name: dev
+    - name: dev-slow
+      tags: slow

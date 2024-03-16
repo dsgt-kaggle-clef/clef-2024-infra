@@ -39,6 +39,12 @@ ansible-playbook -i inventory.dev.gcp.yml dev.yml --skip-tags=slow
 ansible-playbook -i inventory.dev.gcp.yml dev.yml --skip-tags=slow --limit=birdclef-dev
 ```
 
+We also have a shared instance which has a bigger nvme disk for processing large datasets.
+
+```bash
+ansible-playbook -i inventory.big-disk-dev.gcp.yml big-disk-dev.yml
+```
+
 ## links
 
 - https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#content-organization

@@ -79,6 +79,8 @@
         name: nodejs
         state: present
 - name: install nvidia drivers and cuda
+  # skip if no-cuda is set
+  when: not no_cuda
   become: yes
   block:
     - name: install nvidia drivers
