@@ -63,6 +63,60 @@ resource "google_compute_instance" "dev-vm" {
   }
 }
 
+resource "google_compute_instance" "big-disk-vm" {
+  name         = "big-disk-dev"
+  machine_type = "n2d-standard-4"
+  zone         = "${local.region}-b"
+  labels = {
+    app     = "big-disk-dev"
+    version = "ubuntu-2204"
+  }
+
+  metadata_startup_script = <<-EOF
+    #!/bin/bash
+    # does this create a strange chicken and the egg problem?
+    sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 \
+      /dev/disk/by-id/google-local-nvme-ssd-0 \
+      /dev/disk/by-id/google-local-nvme-ssd-1
+    sudo mkfs.ext4 -F /dev/md0
+    sudo mkdir -p /mnt/data
+    sudo mount /mnt/data
+    sudo chmod 0777 /mnt/data
+  EOF
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+      size  = 30
+    }
+    auto_delete = false
+  }
+  // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
+  scratch_disk { interface = "NVME" }
+  scratch_disk { interface = "NVME" }
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+  scheduling {
+    automatic_restart   = false
+    on_host_maintenance = "TERMINATE"
+    provisioning_model  = "STANDARD"
+    preemptible         = false
+  }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+  // ignore changes to current status and cpu_platform
+  lifecycle {
+    ignore_changes = [
+      machine_type,
+      boot_disk,
+      metadata,
+    ]
+  }
+}
+
 resource "google_storage_bucket" "team-bucket" {
   for_each = toset(local.teams)
   name     = "${local.owner}-${each.key}-2024"

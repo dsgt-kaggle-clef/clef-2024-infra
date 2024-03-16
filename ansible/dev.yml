@@ -1,5 +1,7 @@
 - hosts: all
   become: true
+  vars:
+    disk_name: nvme0n1
   roles:
     - name: system
     - name: dev
