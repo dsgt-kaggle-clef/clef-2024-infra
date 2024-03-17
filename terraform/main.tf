@@ -87,6 +87,12 @@ resource "google_storage_bucket" "default" {
   }
 }
 
+// dataproc storage bucket
+resource "google_storage_bucket" "dataproc" {
+  name     = "${local.project_id}-dataproc"
+  location = "US"
+}
+
 resource "google_storage_bucket_iam_binding" "default-public" {
   bucket = google_storage_bucket.default.name
   role   = "roles/storage.objectViewer"
@@ -132,5 +138,13 @@ resource "google_project_iam_member" "storage-viewer" {
   for_each = local.members
   project  = local.project_id
   role     = "roles/storage.objectViewer"
+  member   = each.value
+}
+
+// grant members the ability to read in the project
+resource "google_project_iam_member" "secrets-viewer" {
+  for_each = local.members
+  project  = local.project_id
+  role     = "roles/secretmanager.secretAccessor"
   member   = each.value
 }
