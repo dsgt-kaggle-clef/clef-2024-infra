@@ -148,3 +148,21 @@ resource "google_project_iam_member" "secrets-viewer" {
   role     = "roles/secretmanager.secretAccessor"
   member   = each.value
 }
+
+// create a service account for label studio
+resource "google_service_account" "label-studio" {
+  account_id   = "label-studio"
+  display_name = "Label Studio"
+}
+
+// give it permissions to read and write to storage buckets
+resource "google_project_iam_member" "label-studio-storage" {
+  project = local.project_id
+  role    = "roles/storage.objectAdmin"
+  member  = "serviceAccount:${google_service_account.label-studio.email}"
+}
+
+// output the account name
+output "label-studio-service-account" {
+  value = google_service_account.label-studio.email
+}
