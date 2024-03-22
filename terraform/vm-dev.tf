@@ -124,6 +124,12 @@ resource "google_storage_bucket" "team-bucket" {
   labels = {
     team = each.key
   }
+  cors {
+    origin          = ["*"]
+    method          = ["GET"]
+    response_header = ["*"]
+    max_age_seconds = 3600
+  }
 }
 
 

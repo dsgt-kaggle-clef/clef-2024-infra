@@ -158,7 +158,14 @@ resource "google_service_account" "label-studio" {
 // give it permissions to read and write to storage buckets
 resource "google_project_iam_member" "label-studio-storage" {
   project = local.project_id
-  role    = "roles/storage.objectAdmin"
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.label-studio.email}"
+}
+
+// service account token creator
+resource "google_project_iam_member" "label-studio-token-creator" {
+  project = local.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${google_service_account.label-studio.email}"
 }
 

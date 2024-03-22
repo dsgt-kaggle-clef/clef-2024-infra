@@ -6,8 +6,10 @@ services:
     environment:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
       - LABEL_STUDIO_PORT=8080
+      - GOOGLE_APPLICATION_CREDENTIALS=/label-studio/service_account.json
     volumes:
       - ./data:/label-studio/data:rw
+      - ./service_account.json:/label-studio/service_account.json
     command: label-studio
   # https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app
   oauth2-proxy:

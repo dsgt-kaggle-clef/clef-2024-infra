@@ -34,11 +34,20 @@
       --secret label_studio_dotenv \
       --out-file /opt/label-studio/.env
 
+- name: get service account from secrets manager
+  command: |
+    gcloud secrets versions access latest \
+      --secret label_studio_key_json \
+      --out-file /opt/label-studio/service_account.json
+
 # set the env file to be readable by all users
-- name: set permissions on .env file
+- name: set permissions on secrets
   file:
-    path: /opt/label-studio/.env
+    path: /opt/label-studio/{{ item }}
     mode: 0777
+  with_items:
+    - .env
+    - service_account.json
 
 - name: bring up containers
   docker_compose:
