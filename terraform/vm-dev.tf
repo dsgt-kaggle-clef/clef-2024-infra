@@ -74,9 +74,11 @@ resource "google_compute_instance" "big-disk-vm" {
   metadata_startup_script = <<-EOF
     #!/bin/bash
     # does this create a strange chicken and the egg problem?
-    sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 \
+    sudo mdadm --create /dev/md0 --level=0 --raid-devices=4 \
       /dev/disk/by-id/google-local-nvme-ssd-0 \
-      /dev/disk/by-id/google-local-nvme-ssd-1
+      /dev/disk/by-id/google-local-nvme-ssd-1 \
+      /dev/disk/by-id/google-local-nvme-ssd-2 \
+      /dev/disk/by-id/google-local-nvme-ssd-3
     sudo mkfs.ext4 -F /dev/md0
     sudo mkdir -p /mnt/data
     sudo mount /mnt/data
@@ -93,6 +95,9 @@ resource "google_compute_instance" "big-disk-vm" {
   // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
   scratch_disk { interface = "NVME" }
   scratch_disk { interface = "NVME" }
+  scratch_disk { interface = "NVME" }
+  scratch_disk { interface = "NVME" }
+
   network_interface {
     network = "default"
     access_config {}
