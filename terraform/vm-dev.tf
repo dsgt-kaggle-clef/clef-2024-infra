@@ -43,11 +43,10 @@ resource "google_compute_instance" "dev-vm" {
     }
   }
   scheduling {
-    automatic_restart           = false
-    instance_termination_action = "STOP"
-    on_host_maintenance         = "TERMINATE"
-    provisioning_model          = "SPOT"
-    preemptible                 = true
+    automatic_restart   = false
+    on_host_maintenance = "TERMINATE"
+    provisioning_model  = "STANDARD"
+    preemptible         = false
   }
   service_account {
     email  = google_service_account.team[each.key].email
