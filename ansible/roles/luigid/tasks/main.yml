@@ -3,6 +3,7 @@
   apt:
     name:
       - docker-compose
+      - python3-psycopg2
     update_cache: yes
 
 - name: authenticate to artifact repo
@@ -32,6 +33,14 @@
     gcloud secrets versions access latest \
       --secret luigi_dotenv \
       --out-file /opt/luigid/.env
+
+# set the env file to be readable by all users
+- name: set permissions on secrets
+  file:
+    path: /opt/luigid/{{ item }}
+    mode: 0777
+  with_items:
+    - .env
 
 - name: bring up containers
   docker_compose:

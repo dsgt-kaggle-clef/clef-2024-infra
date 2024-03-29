@@ -1,5 +1,15 @@
 version: "3.9"
 services:
+  db:
+    restart: always
+    image: postgres:16
+    environment:
+      POSTGRES_USER: luigi
+      POSTGRES_PASSWORD: luigi
+      POSTGRES_DB: luigi
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
   luigi:
     restart: always
     image: us-central1-docker.pkg.dev/dsgt-clef-2024/infra/luigi:latest
