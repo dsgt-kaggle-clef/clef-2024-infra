@@ -87,9 +87,9 @@ resource "google_storage_bucket" "default" {
   }
 }
 
-// dataproc storage bucket
-resource "google_storage_bucket" "dataproc" {
-  name     = "${local.project_id}-dataproc"
+// spark-history storage bucket
+resource "google_storage_bucket" "spark-history" {
+  name     = "${local.project_id}-spark-history"
   location = "US"
 }
 
