@@ -69,6 +69,7 @@ resource "google_compute_instance" "big-disk-vm" {
   labels = {
     app     = "big-disk-dev"
     version = "ubuntu-2204"
+    disk    = "raid0"
   }
 
   metadata_startup_script = <<-EOF
@@ -96,6 +97,70 @@ resource "google_compute_instance" "big-disk-vm" {
   scratch_disk { interface = "NVME" }
   scratch_disk { interface = "NVME" }
   scratch_disk { interface = "NVME" }
+  scratch_disk { interface = "NVME" }
+
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+  scheduling {
+    automatic_restart   = false
+    on_host_maintenance = "TERMINATE"
+    provisioning_model  = "STANDARD"
+    preemptible         = false
+  }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+  // ignore changes to current status and cpu_platform
+  lifecycle {
+    ignore_changes = [
+      machine_type,
+      boot_disk,
+      metadata,
+    ]
+  }
+}
+
+// https://cloud.google.com/compute/docs/gpus/gpu-regions-zones
+// https://cloud.google.com/compute/gpus-pricing
+resource "google_compute_instance" "regional-gpu" {
+  for_each = {
+    us-east1-d = "g2-standard-4",
+    us-east4-a = "g2-standard-4",
+    us-west1-b = "g2-standard-4",
+    # us-west2-c="n1-standard-4",
+    # us-west3-b="a2-standard-4",
+    us-west4-a = "g2-standard-4",
+  }
+  name         = "regional-gpu-dev-${each.key}"
+  machine_type = each.value
+  zone         = each.key
+  labels = {
+    disk    = "raid0"
+    app     = "regional-gpu-dev"
+    version = "ubuntu-2204"
+  }
+
+  metadata_startup_script = <<-EOF
+    #!/bin/bash
+    # does this create a strange chicken and the egg problem?
+    sudo mdadm --create /dev/md0 --level=0 --raid-devices=1 \
+      /dev/disk/by-id/google-local-nvme-ssd-0
+    sudo mkfs.ext4 -F /dev/md0
+    sudo mkdir -p /mnt/data
+    sudo mount /mnt/data
+    sudo chmod 0777 /mnt/data
+  EOF
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+      size  = 30
+    }
+    auto_delete = false
+  }
+  // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
   scratch_disk { interface = "NVME" }
 
   network_interface {
