@@ -58,6 +58,7 @@ resource "google_compute_instance" "dev-vm" {
       machine_type,
       boot_disk,
       metadata,
+      guest_accelerator,
     ]
   }
 }
@@ -118,6 +119,7 @@ resource "google_compute_instance" "big-disk-vm" {
       machine_type,
       boot_disk,
       metadata,
+      guest_accelerator,
     ]
   }
 }
@@ -182,6 +184,7 @@ resource "google_compute_instance" "regional-gpu" {
       machine_type,
       boot_disk,
       metadata,
+      guest_accelerator,
     ]
   }
 }
