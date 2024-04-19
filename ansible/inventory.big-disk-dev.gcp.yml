@@ -7,7 +7,8 @@ regions:
 hostnames:
   - name
 filters:
-  - labels.app=big-disk-dev
+  # either big-disk-dev or regional-gpu-dev
+  - labels.disk=raid0
   - labels.version=ubuntu-2204
 compose:
   ansible_host: networkInterfaces[0].accessConfigs[0].natIP
